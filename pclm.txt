@@ -1,0 +1,89 @@
+close all;clc,clear
+box on
+hold on
+grid on
+N=64;k=4;
+xlabel('\mu');
+ylabel('Density probability(%)');
+title(['N=' num2str(N) ' \mu=' num2str(k)]);
+set(gca, 'FontSize', 15);
+set(gca,'XLim',[0 1]);
+set(gca,'YLim',[0 0.5]);
+set(gca, 'XTick',[0:0.2:1]);
+set(gca, 'YTick',[0:0.1:0.5]);
+set(gca,'yTickLabel',num2str(get(gca,'yTick')','%.2f'));
+num=zeros(1,100000);
+x=zeros(1,10000);
+E=0.1;
+R=8;
+L=8;
+ for m=1:R
+        for n=1:L
+        x(m,n)=rand(1);
+        end
+ end
+for i=1:100000   
+    for m=1:8
+        for n=1:8   
+            a=mod(n+1,L);
+            b=mod(m-1,R);
+            c=mod(n-1,L);
+            d=mod(m+1,R);
+            if a==0
+                a=8;
+            end
+            if b==0
+                b=8;
+            end
+            if c==0
+                c=8;
+            end
+            if d==0
+                d=8;
+            end
+        t=(1-E)*PLM(x(m,n),4,64)+E/4*(PLM(x(m,a),4,64)+PLM(x(b,n),4,64)+PLM(x(m,c),4,64)+PLM(x(d,n),4,64));
+       if t>1
+           t=t-1;
+       end
+           x(m,n)=t;
+           num(i)=t;
+        end  
+    end
+end
+count = zeros(1,1000);
+for i=1:10000
+    min = 0;
+    for j =1:1000
+        max = j/1000;
+        if (num(i)>=min && num(i)<max)
+            count(j)=count(j)+1;
+        end
+        min = max;
+    end
+end
+j =0.001:0.001:1;
+plot(j,count/100,'-b');
+hold off     
+function y=PLM(x0,k,N)
+    if x0>0&&x0<1/N
+        y = k.*N^2.*x0.*(1/N-x0);       
+    elseif x0>1/N&&x0<1
+        for j=1:2:(N-1)
+            if x0>j/N&&x0<(j+1)/N
+                y=1-k.*N^2.*(x0-j/N).*((j+1)/N-x0);
+            end
+        end
+        for j=2:2:(N-1)
+            if x0>j/N&&x0<(j+1)/N
+                y=k.*N^2.*(x0-j/N)*((j+1)/N-x0);                
+            end
+        end
+
+    elseif x0==1
+        y=x0-1/(100*N);        
+    else
+        y=x0+1/(100*N);      
+    end
+end 
+
+

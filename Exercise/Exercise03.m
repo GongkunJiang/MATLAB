@@ -1,0 +1,14 @@
+x = [1 2 5 4 8];
+y = [x;1:5];
+subplot(1,4,1);
+bar(y);
+title('Stack');
+subplot(1,4,2);
+bar(y,'stack');
+title('Stacked');
+subplot(1,4,3);
+barh(y);
+title('Horizontal');
+subplot(1,4,4);
+barh(y,'stack');
+title('Horizontaled');
